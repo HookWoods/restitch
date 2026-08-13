@@ -3,7 +3,7 @@ plugins {
     id("org.springframework.boot") version "3.5.4"
 }
 
-group = "io.github.restaggregation.samples"
+group = "fr.hookwood.restitch.samples"
 version = "0.1.0-SNAPSHOT"
 
 java {

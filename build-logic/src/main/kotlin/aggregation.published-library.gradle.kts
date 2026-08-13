@@ -9,7 +9,7 @@ publishing {
             from(components["java"])
             pom {
                 name.set(providers.gradleProperty("pomName").orElse(project.name))
-                description.set(providers.gradleProperty("pomDescription").orElse("REST aggregation library module"))
+                description.set(providers.gradleProperty("pomDescription").orElse("Restitch library module"))
                 url.set(providers.gradleProperty("pomUrl").orElse("https://github.com/HookWoods/restitch"))
                 licenses {
                     license {

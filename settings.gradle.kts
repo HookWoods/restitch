@@ -13,7 +13,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "rest-aggregation"
+rootProject.name = "restitch"
 
 include(
     ":modules:aggregation-api",

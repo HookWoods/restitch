@@ -7,10 +7,13 @@ plugins {
 
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-group = "io.github.restaggregation"
+group = "fr.hookwood.restitch"
 version = "0.1.0-SNAPSHOT"
 
 subprojects {
+    group = rootProject.group
+    version = rootProject.version
+
     when (path) {
         ":samples:boot3-mvc-sample" -> pluginManager.withPlugin("java") {
             dependencies {
