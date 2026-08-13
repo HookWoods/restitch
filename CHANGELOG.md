@@ -6,12 +6,7 @@ This project follows the spirit of Keep a Changelog and uses semantic versioning
 
 ## Unreleased
 
-### Added
-
-- Open-source project documentation, including contribution, conduct, security, support, and release guidance.
-- Public Maven group and Java package namespace `io.github.hookwoods.restitch`.
-
-## 0.1.0 - Unreleased
+## 0.1.0 - 2026-08-13
 
 ### Added
 
@@ -21,4 +16,5 @@ This project follows the spirit of Keep a Changelog and uses semantic versioning
 - Spring Boot 3 starter and auto-configuration using Jackson 2, `RestClient`, `WebClient`, and Reactor-native WebFlux support.
 - Spring Boot 4 starter and auto-configuration using Jackson 3, `RestClient`, `WebClient`, and Reactor-native WebFlux support.
 - MVC and WebFlux samples.
-- Documentation for quick starts, configuration, compatibility, error behavior, and the batch de-duplication benchmark contract.
+- Documentation for quick starts, configuration, compatibility, error behavior, batch de-duplication benchmark contract, contribution, conduct, security, support, and release guidance.
+- Maven Central publishing for the `io.github.hookwoods.restitch` group, using signed stable release tags.

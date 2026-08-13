@@ -62,13 +62,13 @@ repositories {
 
 ```kotlin
 dependencies {
-    implementation("io.github.hookwoods.restitch:aggregation-spring-boot3-starter:0.1.0-SNAPSHOT")
+    implementation("io.github.hookwoods.restitch:aggregation-spring-boot3-starter:0.1.0")
 }
 ```
 
 ```kotlin
 dependencies {
-    implementation("io.github.hookwoods.restitch:aggregation-spring-boot4-starter:0.1.0-SNAPSHOT")
+    implementation("io.github.hookwoods.restitch:aggregation-spring-boot4-starter:0.1.0")
 }
 ```
 
