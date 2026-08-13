@@ -50,13 +50,6 @@ Use exactly one starter for your Spring Boot generation.
 ```kotlin
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://maven.pkg.github.com/HookWoods/restitch")
-        credentials {
-            username = providers.gradleProperty("gpr.user").orNull ?: System.getenv("GITHUB_ACTOR")
-            password = providers.gradleProperty("gpr.key").orNull ?: System.getenv("GITHUB_TOKEN")
-        }
-    }
 }
 ```
 
@@ -70,6 +63,24 @@ dependencies {
 dependencies {
     implementation("io.github.hookwoods.restitch:aggregation-spring-boot4-starter:0.1.0")
 }
+```
+
+For Maven, Maven Central is used by default; add the starter dependency to your `pom.xml`:
+
+```xml
+<dependency>
+    <groupId>io.github.hookwoods.restitch</groupId>
+    <artifactId>aggregation-spring-boot3-starter</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+```xml
+<dependency>
+    <groupId>io.github.hookwoods.restitch</groupId>
+    <artifactId>aggregation-spring-boot4-starter</artifactId>
+    <version>0.1.0</version>
+</dependency>
 ```
 
 While working inside this repository, use project dependencies instead:
@@ -455,11 +466,7 @@ Boot 3 and Boot 4 modules are intentionally separate. Boot 3 uses Jackson 2 only
 
 CI verifies the full reactor, publication task graph, both sample projects, and both Spring generation modules.
 
-Publishing is configured for GitHub Packages:
-
-```sh
-MAVEN_USERNAME="$GITHUB_ACTOR" MAVEN_TOKEN="$GITHUB_TOKEN" ./gradlew publish
-```
+Release publication runs from a signed stable release tag in GitHub Actions. The workflow signs artifacts and publishes them to Maven Central; see [RELEASING.md](RELEASING.md).
 
 ---
 
