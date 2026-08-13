@@ -1,0 +1,24 @@
+aggregation:
+  clients:
+    identity:
+      base-url: https://identity.internal
+      timeout: 500ms
+      propagate-headers:
+        - Authorization
+        - X-Tenant
+        - X-Correlation-ID
+  resolvers:
+    order-owner:
+      client: identity
+      path: /users/{id}
+      source-pointer: /ownerId
+      response-pointer: /data/user
+      error-mode: NULL_FIELD
+      batch:
+        path: /users
+        query-parameter: ids
+        items-pointer: /data/users
+        item-key-pointer: /id
+        max-size: 100
+  limits:
+    max-concurrency: 16
