@@ -10,6 +10,12 @@ import java.util.List;
  * @param <T> hydrated root type
  */
 public record AggregationResult<T>(T value, List<AggregationError> errors) {
+    /**
+     * Creates a result with an immutable copy of its resolver errors.
+     *
+     * @param value hydrated root value
+     * @param errors resolver errors collected during processing
+     */
     public AggregationResult {
         errors = List.copyOf(errors);
     }

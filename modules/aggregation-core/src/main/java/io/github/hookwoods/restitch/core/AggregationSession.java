@@ -31,12 +31,24 @@ public final class AggregationSession implements AutoCloseable {
     private final AtomicInteger requestCount = new AtomicInteger();
     private long sessionBytes;
 
-    /** Creates a request-local session using the supplied limits or defaults when limits are absent. */
+    /**
+     * Creates a request-local session using the supplied limits or defaults when limits are absent.
+     *
+     * @param limits limits that bound retained values and downstream requests
+     */
     public AggregationSession(AggregationLimits limits) {
         this.limits = limits == null ? AggregationLimits.defaults() : limits;
     }
 
-    /** Returns a memoized value for a resolution key, creating it once when absent. */
+    /**
+     * Returns a memoized value for a resolution key, creating it once when absent.
+     *
+     * @param key normalized identity of the downstream resolution
+     * @param type expected type of the memoized value
+     * @param factory supplier used to create the value when no entry exists
+     * @param <T> expected value type
+     * @return existing or newly created value
+     */
     public <T> T memoize(ResolutionKey key, Class<T> type, Supplier<? extends T> factory) {
         Entry entry = entries.computeIfAbsent(key, ignored -> createEntry(key, factory));
         Object value = entry.value();
@@ -47,7 +59,11 @@ public final class AggregationSession implements AutoCloseable {
         return type.cast(value);
     }
 
-    /** Returns the number of values currently retained by this session. */
+    /**
+     * Returns the number of values currently retained by this session.
+     *
+     * @return retained memoized value count
+     */
     public int size() {
         return entries.size();
     }

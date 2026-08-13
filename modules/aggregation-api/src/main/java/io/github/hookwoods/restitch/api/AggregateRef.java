@@ -14,6 +14,10 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(FIELD)
 public @interface AggregateRef {
-    /** Returns the resolver profile name declared in aggregation configuration. */
+    /**
+     * Returns the resolver profile name declared in aggregation configuration.
+     *
+     * @return the configured resolver profile name
+     */
     String value();
 }

@@ -15,6 +15,15 @@ import java.util.TreeMap;
  */
 public record ResolutionKey(
         String client, String path, String extractor, Class<?> targetType, Map<String, String> identityHeaders) {
+    /**
+     * Creates a normalized downstream resolution identity.
+     *
+     * @param client named downstream client
+     * @param path normalized downstream request path
+     * @param extractor response extractor identity
+     * @param targetType target Java type
+     * @param identityHeaders headers that affect response identity
+     */
     public ResolutionKey {
         if (client == null || client.isBlank()) {
             throw new IllegalArgumentException("client is required");
@@ -29,12 +38,29 @@ public record ResolutionKey(
         identityHeaders = normalizeHeaders(identityHeaders);
     }
 
-    /** Creates a key with {@link Object} as the target type. */
+    /**
+     * Creates a key with {@link Object} as the target type.
+     *
+     * @param client named downstream client
+     * @param path downstream request path
+     * @param extractor response extractor identity
+     * @param identityHeaders headers that affect response identity
+     * @return normalized resolution identity
+     */
     public static ResolutionKey of(String client, String path, String extractor, Map<String, String> identityHeaders) {
         return of(client, path, extractor, Object.class, identityHeaders);
     }
 
-    /** Creates a normalized resolution key. */
+    /**
+     * Creates a normalized resolution key.
+     *
+     * @param client named downstream client
+     * @param path downstream request path
+     * @param extractor response extractor identity
+     * @param targetType target Java type
+     * @param identityHeaders headers that affect response identity
+     * @return normalized resolution identity
+     */
     public static ResolutionKey of(
             String client, String path, String extractor, Class<?> targetType, Map<String, String> identityHeaders) {
         return new ResolutionKey(client, normalizePath(path), extractor, targetType, identityHeaders);

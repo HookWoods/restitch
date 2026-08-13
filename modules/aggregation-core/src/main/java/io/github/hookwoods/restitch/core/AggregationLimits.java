@@ -31,6 +31,22 @@ public record AggregationLimits(
         int streamPrefetch,
         int maxBatchSize,
         Duration batchFlushWindow) {
+    /**
+     * Creates validated safety limits for one aggregation.
+     *
+     * @param maxDepth maximum nested DTO traversal depth
+     * @param maxRequests maximum distinct downstream resolutions per session
+     * @param maxConcurrency maximum concurrent downstream resolutions
+     * @param maxResponseBytes maximum downstream response size
+     * @param maxObjectBytes maximum retained aggregate object estimate
+     * @param maxBufferedItems maximum buffered stream items
+     * @param maxSessionEntries maximum request-local memoized entries
+     * @param maxSessionBytes maximum estimated bytes retained by a session
+     * @param maxPendingIds maximum IDs waiting for batch resolution
+     * @param streamPrefetch Reactor stream prefetch limit
+     * @param maxBatchSize maximum IDs in one batch request
+     * @param batchFlushWindow maximum time a batch waits before dispatch
+     */
     public AggregationLimits {
         requirePositive(maxDepth, "maxDepth");
         requirePositive(maxRequests, "maxRequests");
@@ -48,7 +64,11 @@ public record AggregationLimits(
         }
     }
 
-    /** Returns the conservative defaults used when no limits are configured. */
+    /**
+     * Returns the conservative defaults used when no limits are configured.
+     *
+     * @return default aggregation safety limits
+     */
     public static AggregationLimits defaults() {
         return new AggregationLimits(
                 8,

@@ -34,6 +34,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriUtils;
 
+/** Hydrates MVC response DTOs through configured downstream REST resolvers. */
 public final class MvcAggregator {
     private final AggregationProperties properties;
     private final JsonAdapter adapter;
@@ -43,6 +44,13 @@ public final class MvcAggregator {
     private final AggregationObserver observer;
     private final RestClient.Builder restClientBuilder;
 
+    /**
+     * Creates an MVC aggregator backed by a {@link RestClient.Builder}.
+     *
+     * @param properties aggregation configuration
+     * @param adapter Jackson 3 JSON adapter
+     * @param restClientBuilder builder used to create downstream REST clients
+     */
     public MvcAggregator(AggregationProperties properties, JsonAdapter adapter, RestClient.Builder restClientBuilder) {
         this(properties, adapter, (response, resolver) -> response, restClientBuilder,
                 (client, profile, uri, headers) -> headers,
@@ -50,6 +58,14 @@ public final class MvcAggregator {
                 new AggregationObserver() {});
     }
 
+    /**
+     * Creates an MVC aggregator with a response extractor extension.
+     *
+     * @param properties aggregation configuration
+     * @param adapter Jackson 3 JSON adapter
+     * @param responseExtractor response extraction extension
+     * @param restClientBuilder builder used to create downstream REST clients
+     */
     public MvcAggregator(
             AggregationProperties properties,
             JsonAdapter adapter,
@@ -61,6 +77,17 @@ public final class MvcAggregator {
                 new AggregationObserver() {});
     }
 
+    /**
+     * Creates an MVC aggregator with all extension contracts supplied.
+     *
+     * @param properties aggregation configuration
+     * @param adapter Jackson 3 JSON adapter
+     * @param responseExtractor response extraction extension
+     * @param restClientBuilder builder used to create downstream REST clients
+     * @param requestCustomizer downstream request customization extension
+     * @param errorMapper aggregation error mapping extension
+     * @param observer resolution lifecycle observer
+     */
     public MvcAggregator(
             AggregationProperties properties,
             JsonAdapter adapter,
@@ -78,14 +105,36 @@ public final class MvcAggregator {
         this.observer = observer;
     }
 
+    /**
+     * Returns the configuration used by this aggregator.
+     *
+     * @return aggregation configuration
+     */
     public AggregationProperties properties() {
         return properties;
     }
 
+    /**
+     * Hydrates aggregate references in an MVC response value.
+     *
+     * @param root source value to hydrate
+     * @param rootType declared source value type
+     * @param <T> source value type
+     * @return hydrated value
+     */
     public <T> T hydrate(T root, Class<T> rootType) {
         return hydrate(root, rootType, Map.of());
     }
 
+    /**
+     * Hydrates aggregate references while forwarding allowlisted inbound headers.
+     *
+     * @param root source value to hydrate
+     * @param rootType declared source value type
+     * @param inboundHeaders inbound headers available for propagation
+     * @param <T> source value type
+     * @return hydrated value
+     */
     public <T> T hydrate(T root, Class<T> rootType, Map<String, String> inboundHeaders) {
         RequestState state = new RequestState(properties.aggregationLimits());
         try {
@@ -97,10 +146,27 @@ public final class MvcAggregator {
         }
     }
 
+    /**
+     * Hydrates aggregate references and returns collected recoverable errors.
+     *
+     * @param root source value to hydrate
+     * @param rootType declared source value type
+     * @param <T> source value type
+     * @return hydrated value and collected aggregation errors
+     */
     public <T> AggregationResult<T> hydrateResult(T root, Class<T> rootType) {
         return hydrateResult(root, rootType, Map.of());
     }
 
+    /**
+     * Hydrates aggregate references with inbound headers and collects recoverable errors.
+     *
+     * @param root source value to hydrate
+     * @param rootType declared source value type
+     * @param inboundHeaders inbound headers available for propagation
+     * @param <T> source value type
+     * @return hydrated value and collected aggregation errors
+     */
     public <T> AggregationResult<T> hydrateResult(
             T root, Class<T> rootType, Map<String, String> inboundHeaders) {
         RequestState state = new RequestState(properties.aggregationLimits());
@@ -113,6 +179,14 @@ public final class MvcAggregator {
         }
     }
 
+    /**
+     * Alias for {@link #hydrate(Object, Class)}.
+     *
+     * @param root source value to hydrate
+     * @param rootType declared source value type
+     * @param <T> source value type
+     * @return hydrated value
+     */
     public <T> T aggregate(T root, Class<T> rootType) {
         return hydrate(root, rootType);
     }

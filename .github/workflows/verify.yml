@@ -7,6 +7,33 @@ on:
   workflow_dispatch:
 
 jobs:
+  release-notes:
+    name: Release notes
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require an Unreleased changelog entry
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          unreleased_section() {
+            git show "$1:CHANGELOG.md" | awk '
+              /^## Unreleased$/ { in_section = 1; next }
+              in_section && /^## / { exit }
+              in_section { print }
+            '
+          }
+
+          if [[ "$(unreleased_section "$BASE_SHA")" == "$(unreleased_section "$HEAD_SHA")" ]]; then
+            echo "Update the Unreleased section in CHANGELOG.md for this pull request." >&2
+            exit 1
+          fi
+
   full-reactor:
     name: Full reactor
     runs-on: ubuntu-latest

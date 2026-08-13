@@ -39,7 +39,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.context.ContextView;
 
+/** Hydrates reactive DTO streams through configured downstream REST resolvers. */
 public final class ReactiveAggregator {
+    /** Reactor context key used to carry inbound request headers. */
     public static final String INBOUND_HEADERS_CONTEXT_KEY = ReactiveAggregator.class.getName() + ".headers";
 
     private final AggregationProperties properties;
@@ -51,6 +53,12 @@ public final class ReactiveAggregator {
     private final AggregationObserver observer;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Creates a reactive aggregator with default WebClient-based extension contracts.
+     *
+     * @param properties aggregation configuration
+     * @param adapter Jackson 2 JSON adapter
+     */
     public ReactiveAggregator(AggregationProperties properties, JsonAdapter adapter) {
         this(properties, adapter, WebClient.builder().build(), (response, profile) -> response,
                 (client, profile, uri, headers) -> headers, (profile, error) ->
@@ -58,6 +66,17 @@ public final class ReactiveAggregator {
                 new AggregationObserver() {});
     }
 
+    /**
+     * Creates a reactive aggregator with WebClient and supplied extension contracts.
+     *
+     * @param properties aggregation configuration
+     * @param adapter Jackson 2 JSON adapter
+     * @param webClient reactive HTTP client used for downstream calls
+     * @param responseExtractor response extraction extension
+     * @param requestCustomizer downstream request customization extension
+     * @param errorMapper aggregation error mapping extension
+     * @param observer resolution lifecycle observer
+     */
     public ReactiveAggregator(
             AggregationProperties properties,
             JsonAdapter adapter,
@@ -76,14 +95,36 @@ public final class ReactiveAggregator {
         this.objectMapper = ((Jackson2JsonAdapter) adapter).objectMapper();
     }
 
+    /**
+     * Returns the configuration used by this aggregator.
+     *
+     * @return aggregation configuration
+     */
     public AggregationProperties properties() {
         return properties;
     }
 
+    /**
+     * Hydrates a source value using headers from the Reactor context.
+     *
+     * @param source source value to hydrate
+     * @param targetType declared source value type
+     * @param <T> source value type
+     * @return publisher of the hydrated value
+     */
     public <T> Mono<T> hydrate(T source, Class<T> targetType) {
         return Mono.deferContextual(context -> hydrate(source, targetType, contextHeaders(context)));
     }
 
+    /**
+     * Hydrates a source value with explicitly supplied inbound headers.
+     *
+     * @param source source value to hydrate
+     * @param targetType declared source value type
+     * @param inboundHeaders inbound headers available for propagation
+     * @param <T> source value type
+     * @return publisher of the hydrated value
+     */
     public <T> Mono<T> hydrate(T source, Class<T> targetType, Map<String, String> inboundHeaders) {
         return Mono.using(
                 () -> new AggregationSession(properties.aggregationLimits()),
@@ -92,10 +133,27 @@ public final class ReactiveAggregator {
                 AggregationSession::close);
     }
 
+    /**
+     * Hydrates a source value and collects recoverable errors.
+     *
+     * @param source source value to hydrate
+     * @param targetType declared source value type
+     * @param <T> source value type
+     * @return publisher of the hydrated value and collected errors
+     */
     public <T> Mono<AggregationResult<T>> hydrateResult(T source, Class<T> targetType) {
         return hydrateResult(source, targetType, Map.of());
     }
 
+    /**
+     * Hydrates a source value with inbound headers and collects recoverable errors.
+     *
+     * @param source source value to hydrate
+     * @param targetType declared source value type
+     * @param inboundHeaders inbound headers available for propagation
+     * @param <T> source value type
+     * @return publisher of the hydrated value and collected errors
+     */
     public <T> Mono<AggregationResult<T>> hydrateResult(
             T source, Class<T> targetType, Map<String, String> inboundHeaders) {
         return Mono.using(
@@ -108,15 +166,40 @@ public final class ReactiveAggregator {
                 ignored -> {});
     }
 
+    /**
+     * Hydrates every source value in a reactive stream and collects each result's errors.
+     *
+     * @param sources source values to hydrate
+     * @param targetType declared source value type
+     * @param <T> source value type
+     * @return stream of hydrated values and collected errors
+     */
     public <T> Flux<AggregationResult<T>> hydrateResults(Flux<T> sources, Class<T> targetType) {
         return hydrateResults(sources, targetType, Map.of());
     }
 
+    /**
+     * Hydrates every source value with inbound headers and collects each result's errors.
+     *
+     * @param sources source values to hydrate
+     * @param targetType declared source value type
+     * @param inboundHeaders inbound headers available for propagation
+     * @param <T> source value type
+     * @return stream of hydrated values and collected errors
+     */
     public <T> Flux<AggregationResult<T>> hydrateResults(
             Flux<T> sources, Class<T> targetType, Map<String, String> inboundHeaders) {
         return sources.concatMap(source -> hydrateResult(source, targetType, inboundHeaders));
     }
 
+    /**
+     * Hydrates every source value using headers from the Reactor context.
+     *
+     * @param sources source values to hydrate
+     * @param targetType declared source value type
+     * @param <T> source value type
+     * @return stream of hydrated values
+     */
     public <T> Flux<T> hydrate(Flux<T> sources, Class<T> targetType) {
         return Flux.deferContextual(context -> hydrateSources(sources, targetType, contextHeaders(context)));
     }
@@ -126,6 +209,15 @@ public final class ReactiveAggregator {
         return hydrateSources((Flux<Object>) sources, (Class<Object>) targetType, Map.of());
     }
 
+    /**
+     * Hydrates every source value with explicitly supplied inbound headers.
+     *
+     * @param sources source values to hydrate
+     * @param targetType declared source value type
+     * @param inboundHeaders inbound headers available for propagation
+     * @param <T> source value type
+     * @return stream of hydrated values
+     */
     public <T> Flux<T> hydrate(Flux<T> sources, Class<T> targetType, Map<String, String> inboundHeaders) {
         return hydrateSources(sources, targetType, filteredHeaders(inboundHeaders));
     }
@@ -140,15 +232,40 @@ public final class ReactiveAggregator {
                 AggregationSession::close);
     }
 
+    /**
+     * Wraps a hydrated source stream with empty page metadata.
+     *
+     * @param sources source values to hydrate
+     * @param targetType declared source value type
+     * @param <T> source value type
+     * @return hydrated stream wrapper
+     */
     public <T> ReactiveAggregationStream<T> stream(Flux<T> sources, Class<T> targetType) {
         return new ReactiveAggregationStream<>(hydrate(sources, targetType), Mono.empty());
     }
 
+    /**
+     * Streams and hydrates values from a configured root profile.
+     *
+     * @param rootProfile configured root profile name
+     * @param targetType declared root item type
+     * @param <T> root item type
+     * @return hydrated root stream wrapper
+     */
     public <T> ReactiveAggregationStream<T> stream(String rootProfile, Class<T> targetType) {
         return new ReactiveAggregationStream<>(
                 Flux.deferContextual(context -> streamRoot(rootProfile, targetType, contextHeaders(context))), Mono.empty());
     }
 
+    /**
+     * Streams and hydrates a configured root profile with inbound headers.
+     *
+     * @param rootProfile configured root profile name
+     * @param targetType declared root item type
+     * @param inboundHeaders inbound headers available for propagation
+     * @param <T> root item type
+     * @return hydrated root stream wrapper
+     */
     public <T> ReactiveAggregationStream<T> stream(
             String rootProfile, Class<T> targetType, Map<String, String> inboundHeaders) {
         return new ReactiveAggregationStream<>(streamRoot(rootProfile, targetType, filteredHeaders(inboundHeaders)),

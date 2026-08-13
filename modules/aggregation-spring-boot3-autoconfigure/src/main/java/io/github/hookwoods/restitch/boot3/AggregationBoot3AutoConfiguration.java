@@ -17,6 +17,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.result.method.annotation.ResponseBodyResultHandler;
 
+/** Registers Restitch's Jackson 2, MVC, and reactive Spring Boot 3 integration beans. */
 @AutoConfiguration
 @EnableConfigurationProperties(AggregationProperties.class)
 public class AggregationBoot3AutoConfiguration {

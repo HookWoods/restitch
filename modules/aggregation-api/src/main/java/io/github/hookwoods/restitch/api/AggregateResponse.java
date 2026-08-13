@@ -14,6 +14,10 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(METHOD)
 public @interface AggregateResponse {
-    /** Returns the root profile name declared in aggregation configuration. */
+    /**
+     * Returns the root profile name declared in aggregation configuration.
+     *
+     * @return the configured root profile name
+     */
     String value();
 }

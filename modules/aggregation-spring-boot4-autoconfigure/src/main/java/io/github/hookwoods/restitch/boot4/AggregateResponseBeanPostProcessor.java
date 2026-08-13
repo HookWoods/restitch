@@ -6,9 +6,15 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
+/** Proxies Spring beans that expose methods annotated with {@link AggregateResponse}. */
 public final class AggregateResponseBeanPostProcessor implements BeanPostProcessor {
     private final AggregateResponseInterceptor interceptor;
 
+    /**
+     * Creates a post-processor backed by an aggregate response interceptor.
+     *
+     * @param interceptor interceptor applied to annotated method invocations
+     */
     public AggregateResponseBeanPostProcessor(AggregateResponseInterceptor interceptor) {
         this.interceptor = interceptor;
     }

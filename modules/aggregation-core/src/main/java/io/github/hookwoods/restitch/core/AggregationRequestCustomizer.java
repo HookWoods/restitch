@@ -10,6 +10,14 @@ import java.util.Map;
  */
 @FunctionalInterface
 public interface AggregationRequestCustomizer {
-    /** Returns headers to send for the resolved request URI. */
+    /**
+     * Returns headers to send for the resolved request URI.
+     *
+     * @param clientProfile downstream client configuration
+     * @param resolverProfile resolver being invoked
+     * @param requestUri resolved downstream request URI
+     * @param headers headers collected before customization
+     * @return headers to send with the downstream request
+     */
     Map<String, String> customize(ClientProfile clientProfile, ResolverProfile resolverProfile, URI requestUri, Map<String, String> headers);
 }

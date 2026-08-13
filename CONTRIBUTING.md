@@ -53,6 +53,7 @@ Keep pull requests small enough to review confidently. A good pull request inclu
 - A clear description of the user-visible change
 - Tests for new behavior or regression coverage
 - Documentation updates when configuration, usage, or contracts change
+- An entry in the `Unreleased` section of `CHANGELOG.md`; pull requests without one fail the `Release notes` check
 - Confirmation that `./gradlew clean check` passes
 
 Do not commit:

@@ -16,6 +16,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import tools.jackson.databind.ObjectMapper;
 
+/** Registers Restitch's Jackson 3, MVC, and reactive Spring Boot 4 integration beans. */
 @AutoConfiguration
 @ConditionalOnClass({ObjectMapper.class, WebClient.class, RestClient.class})
 @EnableConfigurationProperties(AggregationProperties.class)

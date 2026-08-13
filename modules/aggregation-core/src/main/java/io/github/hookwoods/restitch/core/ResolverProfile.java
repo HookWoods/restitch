@@ -21,6 +21,17 @@ public record ResolverProfile(
         String responsePointer,
         ErrorMode errorMode,
         BatchProfile batch) {
+    /**
+     * Creates validated resolver behavior loaded from aggregation configuration.
+     *
+     * @param name resolver profile name referenced by {@code AggregateRef}
+     * @param client named downstream client
+     * @param path downstream path template
+     * @param sourcePointer JSON Pointer to the source identifier
+     * @param responsePointer JSON Pointer to the hydrated response value
+     * @param errorMode resolver failure policy
+     * @param batch optional batch-resolution behavior
+     */
     public ResolverProfile {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("name is required");

@@ -10,13 +10,24 @@ import io.github.hookwoods.restitch.json.JsonDocument;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Jackson 2 implementation of the Restitch JSON abstraction. */
 public final class Jackson2JsonAdapter implements JsonAdapter {
     private final ObjectMapper objectMapper;
 
+    /**
+     * Creates an adapter backed by a Jackson 2 object mapper.
+     *
+     * @param objectMapper Jackson 2 mapper used for parsing and conversion
+     */
     public Jackson2JsonAdapter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Returns the Jackson 2 object mapper backing this adapter.
+     *
+     * @return backing object mapper
+     */
     public ObjectMapper objectMapper() {
         return objectMapper;
     }
@@ -30,6 +41,12 @@ public final class Jackson2JsonAdapter implements JsonAdapter {
         }
     }
 
+    /**
+     * Converts a Java value to an adapter-owned JSON document.
+     *
+     * @param value Java value to convert
+     * @return JSON representation of the value
+     */
     public JsonDocument fromValue(Object value) {
         return new Document(objectMapper.valueToTree(value));
     }
@@ -38,6 +55,12 @@ public final class Jackson2JsonAdapter implements JsonAdapter {
         return new Document(value);
     }
 
+    /**
+     * Returns the elements of a JSON array document.
+     *
+     * @param document JSON array document
+     * @return array elements as adapter-owned documents
+     */
     public List<JsonDocument> elements(JsonDocument document) {
         JsonNode node = node(document);
         if (!node.isArray()) {

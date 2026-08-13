@@ -10,11 +10,19 @@ import java.util.concurrent.CompletionStage;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/** Applies aggregate hydration to methods annotated with {@link AggregateResponse}. */
 public final class AggregateResponseInterceptor {
     private final ReactiveAggregator reactiveAggregator;
     private final MvcAggregator mvcAggregator;
     private final FutureAggregator futureAggregator;
 
+    /**
+     * Creates an interceptor using the integration's aggregation entry points.
+     *
+     * @param reactiveAggregator reactive aggregation implementation
+     * @param mvcAggregator MVC aggregation implementation
+     * @param futureAggregator completion-stage aggregation implementation
+     */
     public AggregateResponseInterceptor(
             ReactiveAggregator reactiveAggregator,
             MvcAggregator mvcAggregator,
@@ -24,6 +32,15 @@ public final class AggregateResponseInterceptor {
         this.futureAggregator = futureAggregator;
     }
 
+    /**
+     * Invokes a target method and hydrates its result when requested by its annotation.
+     *
+     * @param target invocation target
+     * @param method method to invoke
+     * @param arguments method arguments
+     * @return original or hydrated invocation result
+     * @throws Throwable when invocation or aggregation fails
+     */
     public Object invoke(Object target, Method method, Object... arguments) throws Throwable {
         Object result = invokeTarget(target, method, arguments);
         if (method.getAnnotation(AggregateResponse.class) == null || result == null) {
@@ -54,6 +71,15 @@ public final class AggregateResponseInterceptor {
         return hydrateMvc(result, elementType);
     }
 
+    /**
+     * Alias for {@link #invoke(Object, Method, Object...)}.
+     *
+     * @param target invocation target
+     * @param method method to invoke
+     * @param arguments method arguments
+     * @return original or hydrated invocation result
+     * @throws Throwable when invocation or aggregation fails
+     */
     public Object intercept(Object target, Method method, Object... arguments) throws Throwable {
         return invoke(target, method, arguments);
     }

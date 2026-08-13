@@ -10,11 +10,18 @@ import org.springframework.web.reactive.result.method.annotation.ResponseBodyRes
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+/** Applies aggregate response interception before WebFlux writes an annotated handler result. */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public final class AggregationWebFluxHandlerResultHandler implements HandlerResultHandler {
     private final ResponseBodyResultHandler delegate;
     private final AggregationResponseAdvice advice;
 
+    /**
+     * Creates a handler that delegates final rendering to Spring WebFlux.
+     *
+     * @param delegate standard WebFlux response body handler
+     * @param advice aggregate response interceptor
+     */
     public AggregationWebFluxHandlerResultHandler(
             ResponseBodyResultHandler delegate, AggregationResponseAdvice advice) {
         this.delegate = delegate;

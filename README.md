@@ -43,15 +43,22 @@ header discipline without changing their external API model.
 > Inbound headers are not forwarded by default. Add names to `propagate-headers` to forward them.
 > To remove Restitch, delete the starter dependency, the `aggregation.*` YAML block, and the `@AggregateRef` annotations.
 
-### 1. Add the right starter
+### 1. Choose your starter
 
-Use exactly one starter for your Spring Boot generation.
+Use exactly one starter. The Spring Boot generation determines the JSON stack used by Restitch.
 
-```kotlin
-repositories {
-    mavenCentral()
-}
-```
+| Your application uses | Add this starter | JSON stack |
+| --- | --- | --- |
+| Spring Boot 3.2+ | `aggregation-spring-boot3-starter` | Jackson 2 |
+| Spring Boot 4.x | `aggregation-spring-boot4-starter` | Jackson 3 |
+
+### 2. Install it
+
+#### Gradle (Kotlin DSL)
+
+Maven Central is included in most Gradle Spring Boot projects. If it is not, add `mavenCentral()` to `repositories`.
+
+**Spring Boot 3.2+**
 
 ```kotlin
 dependencies {
@@ -59,13 +66,19 @@ dependencies {
 }
 ```
 
+**Spring Boot 4.x**
+
 ```kotlin
 dependencies {
     implementation("io.github.hookwoods.restitch:aggregation-spring-boot4-starter:0.1.0")
 }
 ```
 
-For Maven, Maven Central is used by default; add the starter dependency to your `pom.xml`:
+#### Maven
+
+Maven Central is used by default. Add one dependency to your `pom.xml`.
+
+**Spring Boot 3.2+**
 
 ```xml
 <dependency>
@@ -75,6 +88,8 @@ For Maven, Maven Central is used by default; add the starter dependency to your 
 </dependency>
 ```
 
+**Spring Boot 4.x**
+
 ```xml
 <dependency>
     <groupId>io.github.hookwoods.restitch</groupId>
@@ -83,17 +98,18 @@ For Maven, Maven Central is used by default; add the starter dependency to your 
 </dependency>
 ```
 
-While working inside this repository, use project dependencies instead:
+#### Building Restitch from this repository
+
+Use the starter matching the Spring Boot generation you are working on:
 
 ```kotlin
 dependencies {
     implementation(project(":modules:aggregation-spring-boot3-starter"))
-    // or
-    implementation(project(":modules:aggregation-spring-boot4-starter"))
+    // Or: implementation(project(":modules:aggregation-spring-boot4-starter"))
 }
 ```
 
-### 2. Mark the field to hydrate
+### 3. Mark the field to hydrate
 
 ```java
 import io.github.hookwoods.restitch.api.AggregateRef;
@@ -111,7 +127,7 @@ public final class Order {
 `@AggregateRef("order-owner")` only names a resolver profile. It does not contain a URL, host, header policy, JSON
 path, or error rule.
 
-### 3. Configure the resolver
+### 4. Configure the resolver
 
 ```yaml
 aggregation:
@@ -135,7 +151,7 @@ aggregation:
 For an `Order` with `ownerId = "42"`, Restitch calls `https://identity.internal/users/42`, selects `/data/user` from
 the downstream response, and assigns that value to `owner`.
 
-### 4. Hydrate in MVC or WebFlux
+### 5. Hydrate in MVC or WebFlux
 
 Spring MVC uses `MvcAggregator` and `RestClient`:
 

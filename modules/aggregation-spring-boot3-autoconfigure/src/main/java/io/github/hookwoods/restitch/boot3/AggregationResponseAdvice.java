@@ -15,12 +15,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/** Intercepts annotated MVC controller responses and hydrates aggregate references. */
 @ControllerAdvice
 public final class AggregationResponseAdvice implements ResponseBodyAdvice<Object> {
     private final ReactiveAggregator reactiveAggregator;
     private final MvcAggregator mvcAggregator;
     private final FutureAggregator futureAggregator;
 
+    /**
+     * Creates response advice using the integration's aggregation entry points.
+     *
+     * @param reactiveAggregator reactive aggregation implementation
+     * @param mvcAggregator MVC aggregation implementation
+     * @param futureAggregator completion-stage aggregation implementation
+     */
     public AggregationResponseAdvice(
             ReactiveAggregator reactiveAggregator, MvcAggregator mvcAggregator, FutureAggregator futureAggregator) {
         this.reactiveAggregator = reactiveAggregator;
@@ -29,12 +37,30 @@ public final class AggregationResponseAdvice implements ResponseBodyAdvice<Objec
     }
 
     @Override
+    /**
+     * Determines whether a controller method opts into aggregate hydration.
+     *
+     * @param returnType controller method return type
+     * @param converterType selected HTTP message converter type
+     * @return {@code true} when the controller method has {@code @AggregateResponse}
+     */
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         Method method = returnType.getMethod();
         return method != null && method.isAnnotationPresent(AggregateResponse.class);
     }
 
     @Override
+    /**
+     * Hydrates the body selected for an aggregate response.
+     *
+     * @param body body selected by the controller
+     * @param returnType controller method return type
+     * @param selectedContentType selected response content type
+     * @param selectedConverterType selected HTTP message converter type
+     * @param request current server request
+     * @param response current server response
+     * @return original or hydrated response body
+     */
     public Object beforeBodyWrite(
             Object body,
             MethodParameter returnType,
@@ -46,6 +72,13 @@ public final class AggregationResponseAdvice implements ResponseBodyAdvice<Objec
         return method == null ? body : intercept(method, body);
     }
 
+    /**
+     * Applies aggregate hydration to a method result when the method is annotated.
+     *
+     * @param method controller method that produced the body
+     * @param body method result to inspect and hydrate
+     * @return original or hydrated method result
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public Object intercept(Method method, Object body) {
         if (!method.isAnnotationPresent(AggregateResponse.class) || body == null) {

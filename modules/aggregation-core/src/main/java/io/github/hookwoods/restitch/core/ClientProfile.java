@@ -12,6 +12,13 @@ import java.util.Set;
  * @param propagatedHeaders explicitly allowlisted inbound headers
  */
 public record ClientProfile(URI baseUri, Duration timeout, Set<String> propagatedHeaders) {
+    /**
+     * Creates validated configuration for a downstream REST client.
+     *
+     * @param baseUri absolute base URI for downstream requests
+     * @param timeout maximum duration of each downstream request
+     * @param propagatedHeaders explicitly allowlisted inbound headers
+     */
     public ClientProfile {
         if (baseUri == null || !baseUri.isAbsolute()) {
             throw new IllegalArgumentException("baseUri must be absolute");

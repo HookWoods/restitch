@@ -8,9 +8,15 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 
+/** Jackson 3 implementation of the Restitch JSON abstraction. */
 public final class Jackson3JsonAdapter implements JsonAdapter {
     private final ObjectMapper mapper;
 
+    /**
+     * Creates an adapter backed by a Jackson 3 object mapper.
+     *
+     * @param mapper Jackson 3 mapper used for parsing and conversion
+     */
     public Jackson3JsonAdapter(ObjectMapper mapper) {
         this.mapper = mapper;
     }
@@ -77,6 +83,12 @@ public final class Jackson3JsonAdapter implements JsonAdapter {
         }
     }
 
+    /**
+     * Converts a Java value to an adapter-owned JSON document.
+     *
+     * @param value Java value to convert
+     * @return JSON representation of the value
+     */
     public JsonDocument toDocument(Object value) {
         try {
             return new Jackson3Document(mapper.valueToTree(value));

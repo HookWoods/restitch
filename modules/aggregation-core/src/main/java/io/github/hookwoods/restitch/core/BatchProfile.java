@@ -10,6 +10,15 @@ package io.github.hookwoods.restitch.core;
  * @param maxSize maximum identifiers sent in one batch request
  */
 public record BatchProfile(String path, String queryParameter, String itemsPointer, String itemKeyPointer, int maxSize) {
+    /**
+     * Creates validated batch-resolution configuration.
+     *
+     * @param path batch endpoint path
+     * @param queryParameter query parameter carrying requested identifiers
+     * @param itemsPointer JSON Pointer to returned items
+     * @param itemKeyPointer JSON Pointer to each item's matching identifier
+     * @param maxSize maximum identifiers sent in one batch request
+     */
     public BatchProfile {
         if (path == null || path.isBlank() || !path.startsWith("/")) {
             throw new IllegalArgumentException("path must start with slash");
