@@ -63,4 +63,4 @@ git tag -s v0.1.0 -m "Release v0.1.0"
 git push origin v0.1.0
 ```
 
-The tag workflow runs `publishAndReleaseToMavenCentral`, waits for Central Portal validation, and releases the deployment automatically. Actual Central publication happens only from CI with repository secrets, not from a developer machine.
+The tag workflow runs `publishAndReleaseToMavenCentral`, waits for Central Portal validation, releases the deployment automatically, then creates or updates the matching GitHub release from the signed tag description. Actual Central publication happens only from CI with repository secrets, not from a developer machine.
