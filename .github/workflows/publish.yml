@@ -56,3 +56,54 @@ jobs:
           else
             gh release create "$TAG_NAME" --title "Restitch $TAG_VERSION" --notes-file release-notes.md
           fi
+
+  build-api-docs:
+    name: Build API docs
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Generate Javadocs
+        run: ./gradlew javadoc
+      - name: Assemble API reference site
+        run: |
+          mkdir -p _site
+          cp docs/api/index.html _site/index.html
+          cp -R modules/aggregation-api/build/docs/javadoc _site/api
+          cp -R modules/aggregation-json-spi/build/docs/javadoc _site/json-spi
+          cp -R modules/aggregation-core/build/docs/javadoc _site/core
+          cp -R modules/aggregation-spring-boot3-autoconfigure/build/docs/javadoc _site/spring-boot3
+          cp -R modules/aggregation-spring-boot4-autoconfigure/build/docs/javadoc _site/spring-boot4
+      - name: Upload API reference site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy-api-docs:
+    name: Deploy API docs
+    needs: build-api-docs
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy API reference site
+        id: deployment
+        uses: actions/deploy-pages@v4

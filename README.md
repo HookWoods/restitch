@@ -11,6 +11,7 @@
 [![Gradle Kotlin DSL](https://img.shields.io/badge/Gradle-Kotlin%20DSL-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/)
 
 [Quick Start](#quick-start) |
+[API Reference](https://hookwoods.github.io/restitch/) |
 [Configuration](#configuration) |
 [Features](#features) |
 [Examples](#examples) |

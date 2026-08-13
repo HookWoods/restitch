@@ -6,6 +6,17 @@ This project follows the spirit of Keep a Changelog and uses semantic versioning
 
 ## Unreleased
 
+## 0.1.1 - 2026-08-14
+
+### Added
+
+- Public API Javadocs and a GitHub Pages deployment after each successful stable release.
+
+### Changed
+
+- Public API, SPI, core, and Spring extension contracts now include complete Javadocs.
+- Pull requests must update the `Unreleased` changelog section before they can pass the release-notes check.
+
 ## 0.1.0 - 2026-08-13
 
 ### Added
