@@ -44,6 +44,27 @@ jobs:
             test -n "${!secret}" || { echo "Missing required secret: $secret" >&2; exit 1; }
           done
           ./gradlew -PreleaseVersion="${GITHUB_REF_NAME#v}" publishAndReleaseToMavenCentral
+      - name: Update README installation version
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          TAG_VERSION: ${{ github.ref_name }}
+        run: |
+          TAG_VERSION="${TAG_VERSION#v}"
+          export TAG_VERSION
+          git fetch origin main
+          git checkout -B main origin/main
+          perl -0pi -e '
+            s{(aggregation-spring-boot[34]-starter:)[0-9]+\.[0-9]+\.[0-9]+}{$1 . $ENV{TAG_VERSION}}ge;
+            s{(<artifactId>aggregation-spring-boot[34]-starter</artifactId>\s*<version>)[0-9]+\.[0-9]+\.[0-9]+}{$1 . $ENV{TAG_VERSION}}ge;
+          ' README.md
+          if git diff --quiet -- README.md; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs: update README for v${TAG_VERSION}"
+          git push origin HEAD:main
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}

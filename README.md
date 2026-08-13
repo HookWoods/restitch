@@ -2,12 +2,13 @@
 
 # Restitch
 
-### Fill REST DTO relationships from configured downstream services without hard-coding HTTP calls in controllers.
+### Declarative cross-service DTO hydration for Spring Boot REST BFFs.
 
 [![Java 17](https://img.shields.io/badge/Java-17-007396?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/17/)
 [![Spring Boot 3](https://img.shields.io/badge/Spring%20Boot-3.2%2B-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Spring Boot 4](https://img.shields.io/badge/Spring%20Boot-4.x-13C100?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Jackson 2 and 3](https://img.shields.io/badge/Jackson-2%20%7C%203-2D6CDF?style=for-the-badge)](#compatibility)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.hookwoods.restitch/aggregation-spring-boot3-starter?style=for-the-badge&label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.hookwoods.restitch/aggregation-spring-boot3-starter)
 [![Gradle Kotlin DSL](https://img.shields.io/badge/Gradle-Kotlin%20DSL-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/)
 
 [Quick Start](#quick-start) |
@@ -23,17 +24,18 @@
 
 ## The Problem
 
-REST APIs often return IDs where clients need full nested objects. The usual fix is to scatter extra HTTP calls across
-controllers, handlers, services, and DTO mapping code. That works at first, then repeated IDs trigger duplicate requests,
-headers leak too easily, and WebFlux streams quietly turn into collected lists.
+REST BFFs often need to return DTOs that combine a root resource with data owned by other services. A service stores
+those references as IDs, not database foreign keys. The usual fix is to scatter extra HTTP calls across controllers,
+handlers, services, and DTO mapping code. That works at first, then repeated IDs trigger duplicate requests, headers leak
+too easily, and WebFlux streams quietly turn into collected lists.
 
 Restitch keeps that work in one place. DTO fields name a resolver profile with `@AggregateRef`, and YAML decides which
 configured client to call, which JSON Pointer selects the source ID, which response value is assigned, and how failures
 behave.
 
-If you have used GraphQL data loaders, gateway composition, or backend-for-frontend hydration, the shape will feel
-familiar. Restitch is for teams that still expose REST endpoints and want the same de-duplication, batching, limits, and
-header discipline without changing their external API model.
+GraphQL federation or a gateway can solve this composition problem too. Restitch is for teams that intentionally keep
+REST endpoints at the BFF boundary and still want de-duplication, batching, limits, and header discipline without
+changing their external API model.
 
 ---
 
@@ -63,7 +65,7 @@ Maven Central is included in most Gradle Spring Boot projects. If it is not, add
 
 ```kotlin
 dependencies {
-    implementation("io.github.hookwoods.restitch:aggregation-spring-boot3-starter:0.1.0")
+    implementation("io.github.hookwoods.restitch:aggregation-spring-boot3-starter:0.1.1")
 }
 ```
 
@@ -71,7 +73,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("io.github.hookwoods.restitch:aggregation-spring-boot4-starter:0.1.0")
+    implementation("io.github.hookwoods.restitch:aggregation-spring-boot4-starter:0.1.1")
 }
 ```
 
@@ -85,7 +87,7 @@ Maven Central is used by default. Add one dependency to your `pom.xml`.
 <dependency>
     <groupId>io.github.hookwoods.restitch</groupId>
     <artifactId>aggregation-spring-boot3-starter</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -95,7 +97,7 @@ Maven Central is used by default. Add one dependency to your `pom.xml`.
 <dependency>
     <groupId>io.github.hookwoods.restitch</groupId>
     <artifactId>aggregation-spring-boot4-starter</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 

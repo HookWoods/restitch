@@ -63,4 +63,6 @@ git tag -s v0.1.0 -m "Release v0.1.0"
 git push origin v0.1.0
 ```
 
-The tag workflow runs `publishAndReleaseToMavenCentral`, waits for Central Portal validation, releases the deployment automatically, then creates or updates the matching GitHub release from the signed tag description. Actual Central publication happens only from CI with repository secrets, not from a developer machine.
+The tag workflow runs `publishAndReleaseToMavenCentral`, waits for Central Portal validation, releases the deployment automatically, then creates or updates the matching GitHub release from the signed tag description. It also updates the four README installation snippets to the tag version after a successful publication. Actual Central publication happens only from CI with repository secrets, not from a developer machine.
+
+The repository must allow the workflow `GITHUB_TOKEN` to write to `main`; if branch protection prevents direct workflow pushes, allow GitHub Actions to bypass that rule.
