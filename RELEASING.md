@@ -1,10 +1,10 @@
 # Releasing
 
-This project publishes Java 17 artifacts with Maven coordinates under group `fr.hookwood.restitch`.
+This project publishes Java 17 artifacts with Maven coordinates under group `io.github.hookwoods.restitch`.
 
 ## Release Checklist
 
-1. Confirm the version in `build.gradle.kts`.
+1. Confirm the release version and matching tag (for example, `v0.1.0`).
 2. Update `CHANGELOG.md`.
 3. Run the full verification suite.
 4. Publish locally and inspect generated POM metadata.
@@ -21,13 +21,22 @@ This project publishes Java 17 artifacts with Maven coordinates under group `fr.
 
 To publish to Maven Central, the project needs:
 
-- A Sonatype Central Portal namespace for `fr.hookwood.restitch`
-- Signing keys available only as local or CI secrets
-- Central Portal credentials available only as local or CI secrets
+- The verified `io.github.hookwoods` Sonatype Central Portal namespace, which authorizes `io.github.hookwoods.restitch`
+- A published OpenPGP public key and its private key available only through CI secrets
+- Central Portal user-token credentials available only through CI secrets
 - Published POM metadata for name, description, URL, license, developers, and SCM
 - A release workflow that signs and uploads release artifacts
 
-The build already defines Apache 2.0 license metadata, project URL, developer metadata, and SCM metadata in `build-logic/src/main/kotlin/aggregation.published-library.gradle.kts`.
+The build defines Apache 2.0 license metadata, project URL, developer metadata, SCM metadata, signed publications, and Central Portal publishing in `build-logic/src/main/kotlin/aggregation.published-library.gradle.kts`.
+
+The default development version is `0.1.0-SNAPSHOT`. The publish workflow derives a release version only from a stable `vMAJOR.MINOR.PATCH` tag, which prevents a snapshot from being released to Central.
+
+Configure these GitHub Actions secrets before creating the first release tag:
+
+- `MAVEN_CENTRAL_USERNAME` and `MAVEN_CENTRAL_PASSWORD`: Central Portal user-token credentials, not the interactive account password.
+- `SIGNING_IN_MEMORY_KEY`: ASCII-armored private OpenPGP key.
+- `SIGNING_IN_MEMORY_KEY_ID`: optional signing subkey ID.
+- `SIGNING_IN_MEMORY_KEY_PASSWORD`: private-key passphrase.
 
 ## Versioning
 
@@ -54,4 +63,4 @@ git tag -s v0.1.0 -m "Release v0.1.0"
 git push origin v0.1.0
 ```
 
-Actual Central publication should happen from CI with repository secrets, not from a developer machine.
+The tag workflow runs `publishAndReleaseToMavenCentral`, waits for Central Portal validation, and releases the deployment automatically. Actual Central publication happens only from CI with repository secrets, not from a developer machine.

@@ -35,8 +35,8 @@ Useful commands:
 
 ## Project Rules
 
-- Public packages use `fr.hookwood.restitch`.
-- Maven coordinates use group `fr.hookwood.restitch`.
+- Public packages use `io.github.hookwoods.restitch`.
+- Maven coordinates use group `io.github.hookwoods.restitch`.
 - Spring Boot 3 modules use Jackson 2 only.
 - Spring Boot 4 modules use Jackson 3 only.
 - MVC integration uses `RestClient`.

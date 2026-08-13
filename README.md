@@ -62,13 +62,13 @@ repositories {
 
 ```kotlin
 dependencies {
-    implementation("fr.hookwood.restitch:aggregation-spring-boot3-starter:0.1.0-SNAPSHOT")
+    implementation("io.github.hookwoods.restitch:aggregation-spring-boot3-starter:0.1.0-SNAPSHOT")
 }
 ```
 
 ```kotlin
 dependencies {
-    implementation("fr.hookwood.restitch:aggregation-spring-boot4-starter:0.1.0-SNAPSHOT")
+    implementation("io.github.hookwoods.restitch:aggregation-spring-boot4-starter:0.1.0-SNAPSHOT")
 }
 ```
 
@@ -85,7 +85,7 @@ dependencies {
 ### 2. Mark the field to hydrate
 
 ```java
-import fr.hookwood.restitch.api.AggregateRef;
+import io.github.hookwoods.restitch.api.AggregateRef;
 
 public final class Order {
     private String ownerId;
@@ -129,7 +129,7 @@ the downstream response, and assigns that value to `owner`.
 Spring MVC uses `MvcAggregator` and `RestClient`:
 
 ```java
-import fr.hookwood.restitch.boot3.MvcAggregator;
+import io.github.hookwoods.restitch.boot3.MvcAggregator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -152,7 +152,7 @@ public final class OrderController {
 Spring WebFlux uses `ReactiveAggregator`, `WebClient`, `Mono`, and `Flux` natively:
 
 ```java
-import fr.hookwood.restitch.boot4.ReactiveAggregator;
+import io.github.hookwoods.restitch.boot4.ReactiveAggregator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -361,7 +361,7 @@ Controller methods can also be annotated with `@AggregateResponse` so the integr
 types. Field hydration still comes from `@AggregateRef` on the DTO.
 
 ```java
-import fr.hookwood.restitch.api.AggregateResponse;
+import io.github.hookwoods.restitch.api.AggregateResponse;
 
 @AggregateResponse("order-root")
 @GetMapping("/orders/{orderId}")
@@ -386,8 +386,8 @@ Resolver profiles can choose one of four modes.
 | `RESULT` | Return `AggregationResult<T>` with the value plus field-level `AggregationError` entries. |
 
 ```java
-import fr.hookwood.restitch.api.AggregateRequest;
-import fr.hookwood.restitch.api.ErrorMode;
+import io.github.hookwoods.restitch.api.AggregateRequest;
+import io.github.hookwoods.restitch.api.ErrorMode;
 import java.util.Map;
 
 AggregateRequest<Order> request = new AggregateRequest<>(

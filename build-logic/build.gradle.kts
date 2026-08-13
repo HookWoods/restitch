@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.vanniktech.maven.publish)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.assertj.core)

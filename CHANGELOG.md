@@ -9,7 +9,7 @@ This project follows the spirit of Keep a Changelog and uses semantic versioning
 ### Added
 
 - Open-source project documentation, including contribution, conduct, security, support, and release guidance.
-- Public Maven group and Java package namespace `fr.hookwood.restitch`.
+- Public Maven group and Java package namespace `io.github.hookwoods.restitch`.
 
 ## 0.1.0 - Unreleased
 

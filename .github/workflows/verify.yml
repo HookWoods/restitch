@@ -68,8 +68,8 @@ jobs:
       fail-fast: false
       matrix:
         module:
-          - modules/aggregation-spring-boot3-autoconfigure
-          - modules/aggregation-spring-boot4-autoconfigure
+          - ":modules:aggregation-spring-boot3-autoconfigure"
+          - ":modules:aggregation-spring-boot4-autoconfigure"
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -81,4 +81,4 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Verify generation module
-        run: ./gradlew ":${{ matrix.module }}:check"
+        run: ./gradlew "${{ matrix.module }}:check"

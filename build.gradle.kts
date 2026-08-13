@@ -7,8 +7,16 @@ plugins {
 
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-group = "fr.hookwood.restitch"
-version = "0.1.0-SNAPSHOT"
+group = "io.github.hookwoods.restitch"
+version = providers.gradleProperty("releaseVersion").orElse("0.1.0-SNAPSHOT").get()
+
+tasks.register("printVersion") {
+    group = "help"
+    description = "Prints the version that will be published."
+    doLast {
+        println(project.version)
+    }
+}
 
 subprojects {
     group = rootProject.group

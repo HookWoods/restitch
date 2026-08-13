@@ -14,4 +14,4 @@
 - [ ] Boot 4 remains Jackson 3 only
 - [ ] MVC remains `RestClient`
 - [ ] WebFlux remains Reactor-native
-- [ ] Public package and Maven group remain `fr.hookwood.restitch`
+- [ ] Public package and Maven group remain `io.github.hookwoods.restitch`

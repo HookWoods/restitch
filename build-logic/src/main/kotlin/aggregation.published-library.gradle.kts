@@ -1,6 +1,12 @@
 plugins {
     id("aggregation.java-library")
     `maven-publish`
+    id("com.vanniktech.maven.publish.base")
+}
+
+mavenPublishing {
+    publishToMavenCentral(automaticRelease = true)
+    signAllPublications()
 }
 
 publishing {
